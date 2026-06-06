@@ -1,0 +1,45 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Cargo build/debug local backend",
+      "cargo": {
+        "args": [
+          "run",
+          "-p",
+          "local_backend",
+          "--bin",
+          "convex-local-backend",
+          "--",
+          "--instance-name",
+          "carnitas",
+          "--instance-secret",
+          "4361726e697461732c206c69746572616c6c79206d65616e696e6720226c6974"
+        ],
+        "filter": { "name": "convex-local-backend" },
+      },
+      "sourceLanguages": ["rust"]
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug pre-built local backend",
+      "program": "${workspaceFolder}/target/debug/convex-local-backend",
+      "args": [
+        "--instance-name",
+        "carnitas",
+        "--instance-secret",
+        "4361726e697461732c206c69746572616c6c79206d65616e696e6720226c6974"
+      ],
+      "sourceLanguages": ["rust"]
+    },
+  ],
+  "lldb.sourceLanguages": ["rust"]
+}
+
+
+
+
