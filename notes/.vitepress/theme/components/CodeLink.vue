@@ -5,12 +5,16 @@ import { useData } from "vitepress";
 const props = defineProps<{
   file: string;
   line?: string | number;
+  repo?: "convex" | "lbbb";
 }>();
 
 const { theme } = useData();
 
 const href = computed(() => {
-  const root = theme.value.workspaceRoot as string;
+  const root =
+    props.repo === "lbbb"
+      ? (theme.value.lbbbRoot as string)
+      : (theme.value.workspaceRoot as string);
   const path = `${root}/${props.file.replace(/^\//, "")}`;
   return props.line !== undefined
     ? `cursor://file/${path}:${props.line}`

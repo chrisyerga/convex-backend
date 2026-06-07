@@ -26,11 +26,11 @@ Worth searching for existing inspector-related code:
 
 ```mermaid
 flowchart TD
-  goal[Plug in v8::inspector]
-  initV8[initialize_v8 - during V8 platform setup]
-  isolateNew[IsolateClient::new - per-client inspector agent?]
-  executeUdf[execute_udf - attach per execution session]
-  worker[IsolateWorker::service_requests - debug channel?]
+  goal["Plug in v8::inspector"]
+  initV8["initialize_v8 - during V8 platform setup"]
+  isolateNew["IsolateClient::new - per-client inspector agent?"]
+  executeUdf["execute_udf - attach per execution session"]
+  worker["IsolateWorker::service_requests - debug channel?"]
 
   goal --> initV8
   goal --> isolateNew

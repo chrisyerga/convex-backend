@@ -12,9 +12,9 @@ After stepping through all the setup of the Action and function_runner envs, the
 ```mermaid
 flowchart TD
   queryEntry[execute_public_query]
-  runFn[FunctionRunner::run_function]
+  runFn["FunctionRunner::run_function"]
   executeUdf[execute_udf]
-  worker[IsolateWorker::service_requests]
+  worker["IsolateWorker::service_requests"]
   v8[V8 isolate runs JS]
 
   queryEntry --> runFn --> executeUdf --> worker --> v8

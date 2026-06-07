@@ -41,10 +41,10 @@ HTTP actions note:
 
 ```mermaid
 flowchart TD
-  fnRunner[InProcessFunctionRunner::new]
-  isolateNew[IsolateClient::new]
+  fnRunner["InProcessFunctionRunner::new"]
+  isolateNew["IsolateClient::new"]
   initV8[initialize_v8]
-  platform[v8::new_unprotected_default_platform]
+  platform["v8::new_unprotected_default_platform"]
   flags[V8 CLI flags]
   scheduler[scheduler + workers]
   executeUdf[execute_udf]

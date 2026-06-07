@@ -1,68 +1,84 @@
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitepress";
+import { withMermaid } from "vitepress-plugin-mermaid";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const workspaceRoot = resolve(__dirname, "../..");
+const lbbbRoot = resolve(workspaceRoot, "../../lindale/lbbb");
 
-export default defineConfig({
-  title: "Convex Backend Exploration",
-  description: "Personal notes from stepping through the convex-backend codebase",
-  ignoreDeadLinks: [/^http:\/\/localhost/],
-  markdown: {
-    mermaid: true,
-  },
-  vite: {
-    server: {
-      port: 5173,
+export default withMermaid(
+  defineConfig({
+    title: "Convex Backend Exploration",
+    description: "Personal notes from stepping through the convex-backend codebase",
+    ignoreDeadLinks: [/^http:\/\/localhost/],
+    vite: {
+      server: {
+        port: 5173,
+      },
+      optimizeDeps: {
+        include: ["mermaid"],
+      },
+      ssr: {
+        noExternal: ["mermaid"],
+      },
     },
-  },
-  themeConfig: {
-    workspaceRoot,
-    search: {
-      provider: "local",
-    },
+    themeConfig: {
+      workspaceRoot,
+      lbbbRoot,
+      search: {
+        provider: "local",
+      },
     nav: [
       { text: "Home", link: "/" },
+      { text: "Today", link: "/today/" },
       { text: "Goals", link: "/goals/v8-inspector" },
     ],
-    sidebar: [
-      {
-        text: "Getting started",
-        items: [
-          { text: "Overview", link: "/" },
-          { text: "Build & run", link: "/dev/build-and-run" },
-          { text: "Ports & env", link: "/dev/ports-and-env" },
-          { text: "Debugger quirks", link: "/dev/debugger-quirks" },
-        ],
-      },
-      {
-        text: "Startup",
-        items: [
-          { text: "Entrypoint", link: "/startup/entrypoint" },
-          { text: "make_app()", link: "/startup/make-app" },
-          { text: "Config", link: "/startup/config" },
-        ],
-      },
-      {
-        text: "Execution",
-        items: [
-          { text: "Function runner", link: "/execution/function-runner" },
-          { text: "Isolate client", link: "/execution/isolate-client" },
-          { text: "Actions vs runner", link: "/execution/actions-vs-runner" },
-        ],
-      },
-      {
-        text: "Flows",
-        items: [
-          { text: "Query entry", link: "/flows/query-entry" },
-          { text: "UDF execution", link: "/flows/udf-execution" },
-        ],
-      },
-      {
-        text: "Goals",
-        items: [{ text: "V8 inspector", link: "/goals/v8-inspector" }],
-      },
-    ],
-  },
-});
+      sidebar: [
+        {
+          text: "Today — lbbb trace",
+          items: [
+            { text: "Overview", link: "/today/" },
+            { text: "pets.listMine", link: "/today/list-mine" },
+          ],
+        },
+        {
+          text: "Getting started",
+          items: [
+            { text: "Overview", link: "/" },
+            { text: "Build & run", link: "/dev/build-and-run" },
+            { text: "Ports & env", link: "/dev/ports-and-env" },
+            { text: "Debugger quirks", link: "/dev/debugger-quirks" },
+          ],
+        },
+        {
+          text: "Startup",
+          items: [
+            { text: "Entrypoint", link: "/startup/entrypoint" },
+            { text: "make_app()", link: "/startup/make-app" },
+            { text: "Config", link: "/startup/config" },
+          ],
+        },
+        {
+          text: "Execution",
+          items: [
+            { text: "Function runner", link: "/execution/function-runner" },
+            { text: "Isolate client", link: "/execution/isolate-client" },
+            { text: "Actions vs runner", link: "/execution/actions-vs-runner" },
+          ],
+        },
+        {
+          text: "Flows",
+          items: [
+            { text: "Query entry", link: "/flows/query-entry" },
+            { text: "UDF execution", link: "/flows/udf-execution" },
+          ],
+        },
+        {
+          text: "Goals",
+          items: [{ text: "V8 inspector", link: "/goals/v8-inspector" }],
+        },
+      ],
+    },
+  }),
+);
