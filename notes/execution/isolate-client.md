@@ -4,11 +4,11 @@ The isolate is Convex's V8 sandbox runner / cloud worker. Created inside `InProc
 
 ## IsolateClient::new()
 
-<CodeLink file="crates/isolate/src/client.rs" line="550">IsolateClient::new()</CodeLink>
+<CrateRef crate="isolate" file="client.rs" path="crates/isolate/src/client.rs" line="550" /> `IsolateClient::new()`
 
 ### initialize_v8()
 
-<CodeLink file="crates/isolate/src/client.rs" line="463">initialize_v8()</CodeLink>
+<CrateRef crate="isolate" file="client.rs" path="crates/isolate/src/client.rs" line="463" /> `initialize_v8()`
 
 1. Sets up some unicode stuff
 2. `v8::new_unprotected_default_platform()`
@@ -26,7 +26,7 @@ The isolate is Convex's V8 sandbox runner / cloud worker. Created inside `InProc
 
 ## Key methods in client.rs
 
-- <CodeLink file="crates/isolate/src/client.rs" line="631">execute_udf()</CodeLink>
+- <CrateRef crate="isolate" file="client.rs" path="crates/isolate/src/client.rs" line="631" /> `execute_udf()`
 - `execute_action()`
 - `execute_http_action()`
 

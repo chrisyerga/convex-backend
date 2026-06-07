@@ -16,8 +16,8 @@ Start simple. First target: **the signed-in user's pet list**.
 |-------|-------|
 | UI | <CodeLink repo="lbbb" file="src/routes/app/pets/index.tsx" line="14">`/app/pets/` page</CodeLink> |
 | Convex query | <CodeLink repo="lbbb" file="convex/pets.ts" line="65">`pets.listMine`</CodeLink> |
-| Backend entry | <CodeLink file="crates/application/src/api.rs" line="98">`execute_public_query`</CodeLink> |
-| UDF runner | <CodeLink file="crates/isolate/src/client.rs" line="631">`execute_udf`</CodeLink> |
+| Backend entry | <CrateRef crate="application" file="api.rs" path="crates/application/src/api.rs" line="98" /> `execute_public_query` |
+| UDF runner | <CrateRef crate="isolate" file="client.rs" path="crates/isolate/src/client.rs" line="631" /> `execute_udf` |
 
 See [pets.listMine trace](/today/list-mine) for the full walkthrough.
 

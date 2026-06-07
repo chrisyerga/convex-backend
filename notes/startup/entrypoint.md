@@ -1,6 +1,6 @@
 # Entrypoint
 
-Found entrypoint at <CodeLink file="crates/local_backend/src/main.rs" line="1">crates/local_backend/src/main.rs::main()</CodeLink>.
+Found entrypoint at <CrateRef crate="local_backend" file="main.rs" path="crates/local_backend/src/main.rs" line="1" /> `main()`.
 
 ## Stepping trace
 

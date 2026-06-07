@@ -46,12 +46,15 @@ export default withMermaid(
         {
           text: "Crates",
           items: [
-            { text: "Overview", link: "/crates/" },
             { text: "sync", link: "/crates/sync" },
             { text: "application", link: "/crates/application" },
             { text: "isolate", link: "/crates/isolate" },
             { text: "function_runner", link: "/crates/function_runner" },
             { text: "local_backend", link: "/crates/local_backend" },
+            { text: "keybroker", link: "/crates/keybroker" },
+            { text: "search", link: "/crates/search" },
+            { text: "backend_harness", link: "/crates/backend_harness" },
+            { text: "howto", link: "/crates/" },
           ],
         },
         {

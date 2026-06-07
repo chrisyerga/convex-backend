@@ -5,12 +5,12 @@
 | Port | Purpose |
 |------|---------|
 | `3210` | Convex backend (daemon) |
-| `3211` | HTTP actions — `config.site_proxy_port` in <CodeLink file="crates/local_backend/src/main.rs">main.rs</CodeLink> |
+| `3211` | HTTP actions — `config.site_proxy_port` in <CrateRef crate="local_backend" file="main.rs" path="crates/local_backend/src/main.rs" /> |
 | `6790` | Local dashboard app |
 
 ## Mythological (hosted / harness)
 
-Sniffed from <CodeLink file="crates/backend_harness">crates/backend_harness</CodeLink> — not confirmed for local dev:
+Sniffed from <CrateRef crate="backend_harness" file="lib.rs" path="crates/backend_harness/src/lib.rs" /> — not confirmed for local dev:
 
 | Port | Guess |
 |------|-------|
@@ -21,7 +21,7 @@ Sniffed from <CodeLink file="crates/backend_harness">crates/backend_harness</Cod
 
 ## Key config URLs
 
-From <CodeLink file="crates/local_backend/src/config.rs">config.rs</CodeLink>:
+From <CrateRef crate="local_backend" file="config.rs" path="crates/local_backend/src/config.rs" />:
 
 - **convex_origin** — convex server (`localhost:3210` or `brave-nipples.xxx.etc`)
 - **convex_site** — HTTP actions site URL (AHA: site url is for actions)

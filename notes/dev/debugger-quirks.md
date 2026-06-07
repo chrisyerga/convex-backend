@@ -27,7 +27,7 @@ pkill convex-local-backend
 
 After stepping through startup, the rest is highly async. Good places to re-enter:
 
-- <CodeLink file="crates/isolate/src/client.rs" line="631">execute_udf()</CodeLink>
-- <CodeLink file="crates/isolate/src/client.rs" line="1449">IsolateWorker::service_requests</CodeLink>
+- <CrateRef crate="isolate" file="client.rs" path="crates/isolate/src/client.rs" line="631" /> `execute_udf()`
+- <CrateRef crate="isolate" file="client.rs" path="crates/isolate/src/client.rs" line="1449" /> `IsolateWorker::service_requests`
 
 See [UDF execution](/flows/udf-execution) for the async flow.

@@ -8,7 +8,7 @@ Likely candidates are somewhere that hooks into function_runner or thereabouts. 
 
 ## Clues already in the codebase
 
-In <CodeLink file="crates/isolate/src/client.rs" line="463">initialize_v8()</CodeLink>, one of the V8 flags is:
+In <CrateRef crate="isolate" file="client.rs" path="crates/isolate/src/client.rs" line="463" /> `initialize_v8()`, one of the V8 flags is:
 
 ```
 --js-base-64
@@ -40,10 +40,10 @@ flowchart TD
 
 | Location | Rationale |
 |----------|-----------|
-| `initialize_v8()` | One-time V8 platform setup; inspector needs platform |
-| `IsolateClient::new()` | Create inspector agent alongside scheduler/workers |
-| `execute_udf()` | Per-execution debug session (most useful for stepping JS) |
-| `IsolateWorker::service_requests` | Worker-level debug channel |
+| `initialize_v8()` | <CrateRef crate="isolate" file="client.rs" path="crates/isolate/src/client.rs" line="463" /> — one-time V8 platform setup; inspector needs platform |
+| `IsolateClient::new()` | <CrateRef crate="isolate" file="client.rs" path="crates/isolate/src/client.rs" line="550" /> — create inspector agent alongside scheduler/workers |
+| `execute_udf()` | <CrateRef crate="isolate" file="client.rs" path="crates/isolate/src/client.rs" line="631" /> — per-execution debug session (most useful for stepping JS) |
+| `IsolateWorker::service_requests` | <CrateRef crate="isolate" file="client.rs" path="crates/isolate/src/client.rs" line="1449" /> — worker-level debug channel |
 
 ## Next steps
 

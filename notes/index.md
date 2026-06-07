@@ -28,6 +28,6 @@ See [V8 inspector goal](/goals/v8-inspector) for the north star.
 
 Click any <span style="font-family: var(--vp-font-family-mono); border-bottom: 1px dashed #8b5cf6">underlined symbol</span> to open the file in Cursor/VS Code.
 
-Example: <CodeLink file="crates/local_backend/src/main.rs" line="1">main.rs entrypoint</CodeLink>
+Example: <CrateRef crate="local_backend" file="main.rs" path="crates/local_backend/src/main.rs" line="1" />
 
 Crate pills: <CrateRef crate="sync" file="worker.rs" path="crates/sync/src/worker.rs" /> — click crate name for notes, file name to open in Cursor.

@@ -6,11 +6,11 @@
 
 ### key_broker()
 
-Instantiated first. Config details in [Config](/startup/config) — lots of interesting stuff in <CodeLink file="crates/local_backend/src/config.rs">config.rs</CodeLink>.
+Instantiated first. Config details in [Config](/startup/config) — lots of interesting stuff in <CrateRef crate="local_backend" file="config.rs" path="crates/local_backend/src/config.rs" />.
 
 ### Search
 
-Sets up searcher / `in_process_searcher` for search indexing — <CodeLink file="crates/search">crates/search</CodeLink>.
+Sets up searcher / `in_process_searcher` for search indexing — <CrateRef crate="search" file="lib.rs" path="crates/search/src/lib.rs" />.
 
 ### Database
 

@@ -79,10 +79,10 @@ sequenceDiagram
 
 ### Key backend touchpoints
 
-1. **Sync worker** — <CodeLink file="crates/sync/src/worker.rs" line="999">calls `execute_public_query`</CodeLink> when a subscription needs refresh
-2. **Query entry** — <CodeLink file="crates/application/src/api.rs" line="98">`execute_public_query`</CodeLink>
-3. **UDF execution** — <CodeLink file="crates/isolate/src/client.rs" line="631">`execute_udf`</CodeLink>
-4. **Worker loop** — <CodeLink file="crates/isolate/src/client.rs" line="1449">`IsolateWorker::service_requests`</CodeLink>
+1. **Sync worker** — <CrateRef crate="sync" file="worker.rs" path="crates/sync/src/worker.rs" line="999" /> calls `execute_public_query` when a subscription needs refresh
+2. **Query entry** — <CrateRef crate="application" file="api.rs" path="crates/application/src/api.rs" line="98" /> `execute_public_query`
+3. **UDF execution** — <CrateRef crate="isolate" file="client.rs" path="crates/isolate/src/client.rs" line="631" /> `execute_udf`
+4. **Worker loop** — <CrateRef crate="isolate" file="client.rs" path="crates/isolate/src/client.rs" line="1449" /> `IsolateWorker::service_requests`
 
 UDF path the backend sees: `pets:listMine` (module `pets`, export `listMine`).
 
@@ -96,14 +96,11 @@ UDF path the backend sees: `pets:listMine` (module `pets`, export `listMine`).
 
 ## Code Flow
 
-<CrateRef crate="sync" file="worker.rs" path="crates/sync/src/worker.rs" line="999" /> `run_update_queries()` gets a request — sync crate seems to handle a lot of the client/server interface. Goes to 
+<CrateRef crate="sync" file="worker.rs" path="crates/sync/src/worker.rs" line="999" /> `run_update_queries()` gets a request — sync crate seems to handle a lot of the client/server interface. Goes to
 <CrateRef crate="application" file="api.rs" path="crates/application/src/api.rs" line="98" /> `execute_public_query()` which is thin and calls
-<CrateRef crate="application" file="lib.rs" path="crates/application/src/lib.rs" line="1103" /> `read_only_udf_at_ts()`. Lots of interesting stuff in `lib.rs`
+<CrateRef crate="application" file="lib.rs" path="crates/application/src/lib.rs" line="1093" /> `read_only_udf_at_ts()`. Lots of interesting stuff in `lib.rs`.
 
-> <CrateRef crate="poopy" file="redaction.rs" path="crates/application/src/lib.rs" line="1103" /> redacts log lines the client shouldn't see. Shouldn't just for cleanliness or is there tasty shit in there?
-
-#### Random
-<CrateRef crate="application" file="redaction.rs" path="crates/application/src/lib.rs" line="1103" /> redacts log lines the client shouldn't see. Shouldn't just for cleanliness or is there tasty shit in there?
+<CrateRef crate="application" file="redaction.rs" path="crates/application/src/redaction.rs" /> redacts log lines the client shouldn't see. Shouldn't just for cleanliness or is there tasty shit in there?
 
 ## Open questions
 

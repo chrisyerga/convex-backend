@@ -1,6 +1,6 @@
 # Config
 
-Inside <CodeLink file="crates/local_backend/src/config.rs">crates/local_backend/src/config.rs</CodeLink> — lots of interesting stuff.
+Inside <CrateRef crate="local_backend" file="config.rs" path="crates/local_backend/src/config.rs" /> — lots of interesting stuff.
 
 ## Config interface
 
@@ -23,7 +23,7 @@ Has db driver, deployment URL, etc.
 
 ## Dev keys location
 
-Hard-coded dev keys for local backend: <CodeLink file="crates/keybroker/dev">crates/keybroker/dev/</CodeLink>
+Hard-coded dev keys for local backend: <CrateRef crate="keybroker" file="admin_key.txt" path="crates/keybroker/dev/admin_key.txt" />
 
 Used by `just run-local-backend` via `instance_name.txt` and `secret.txt`.
 

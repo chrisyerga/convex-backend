@@ -6,7 +6,7 @@ Client/server sync protocol — handles WebSocket connections from Convex client
 
 | File | Role |
 |------|------|
-| `worker.rs` | Sync worker — runs subscribed queries, calls into Application |
+| <CrateRef crate="sync" file="worker.rs" path="crates/sync/src/worker.rs" /> | Sync worker — runs subscribed queries, calls into Application |
 
 ## Notes
 

@@ -5,7 +5,7 @@ There seem to be many ways to build the backend:
 ## Backend
 
 1. `just run-local-backend` is the default way to get stuff going
-   - Wrapper around `cargo run` that passes args to set up a dev backend called _carnitas_ with hard-coded keys in <CodeLink file="crates/keybroker/dev">crates/keybroker/dev/</CodeLink>
+   - Wrapper around `cargo run` that passes args to set up a dev backend called _carnitas_ with hard-coded keys in <CrateRef crate="keybroker" file="instance_name.txt" path="crates/keybroker/dev/instance_name.txt" />
 2. `cargo build` works for just the build step
 3. [Rush](https://rushjs.io) is the monorepo JS build tool — invoke with `just rush`
 

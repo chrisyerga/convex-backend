@@ -2,7 +2,7 @@
 
 **function_runner** is the main cloud-worker sandbox method.
 
-Source: <CodeLink file="crates/function_runner/src/lib.rs" line="84">crates/function_runner/src/lib.rs</CodeLink>
+Source: <CrateRef crate="function_runner" file="lib.rs" path="crates/function_runner/src/lib.rs" line="84" />
 
 Lots of interesting-looking methods inside: `evaluate()`, `evaluate_schema()`, `evaluate_app_definitions()`, etc. Same crate has `InProcessFunctionRunner<RT>`.
 
@@ -63,7 +63,7 @@ function_runner creates a new `IsolateClient`. Not sure if `Actions` does the sa
 
 `Analyze()` runs in an `AnalyzeEnvironment`. The runner sends a oneshot request to itself (scheduler?).
 
-Code in <CodeLink file="crates/isolate/src/analyze">crates/isolate/analyze</CodeLink> — looks like it finds queries, mutations, UDFs, HTTP action routes, and crons.
+Code in <CrateRef crate="isolate" file="analyze.rs" path="crates/isolate/src/environment/analyze.rs" /> — looks like it finds queries, mutations, UDFs, HTTP action routes, and crons.
 
 ## Related
 

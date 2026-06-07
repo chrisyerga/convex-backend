@@ -4,7 +4,7 @@ Most traffic goes through `execute_public_query` — the main entry point for qu
 
 ## Signature
 
-From <CodeLink file="crates/application/src/api.rs" line="98">crates/application/src/api.rs</CodeLink>:
+From <CrateRef crate="application" file="api.rs" path="crates/application/src/api.rs" line="98" />:
 
 ```rust
 /// Execute a public query on the root app. This method is used by the sync
@@ -25,8 +25,8 @@ async fn execute_public_query(
 
 ## Callers
 
-- <CodeLink file="crates/sync/src/worker.rs" line="999">sync worker</CodeLink> — WebSocket subscription traffic
-- <CodeLink file="crates/local_backend/src/public_api.rs" line="418">local_backend public API</CodeLink> — HTTP API
+- <CrateRef crate="sync" file="worker.rs" path="crates/sync/src/worker.rs" line="999" /> — WebSocket subscription traffic
+- <CrateRef crate="local_backend" file="public_api.rs" path="crates/local_backend/src/public_api.rs" line="418" /> — HTTP API
 
 ## Query flow (high level)
 

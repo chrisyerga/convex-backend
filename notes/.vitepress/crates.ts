@@ -30,6 +30,18 @@ export const crateRegistry: Record<string, CrateEntry> = {
     color: "#ef4444",
     blurb: "InProcessFunctionRunner — bridges Application to IsolateClient",
   },
+  keybroker: {
+    color: "#64748b",
+    blurb: "Dev instance keys and secrets for local backend",
+  },
+  search: {
+    color: "#06b6d4",
+    blurb: "Search indexing — in_process_searcher setup at startup",
+  },
+  backend_harness: {
+    color: "#a855f7",
+    blurb: "Test harness — port sniffing for hosted deployments",
+  },
 };
 
 const FALLBACK_COLORS = [

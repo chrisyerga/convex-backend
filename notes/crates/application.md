@@ -6,8 +6,9 @@ Core `Application` type — dispatches queries, mutations, and actions to the fu
 
 | File | Role |
 |------|------|
-| `api.rs` | `execute_public_query` and related API methods |
-| `lib.rs` | Main Application implementation |
+| <CrateRef crate="application" file="api.rs" path="crates/application/src/api.rs" /> | `execute_public_query` and related API methods |
+| <CrateRef crate="application" file="lib.rs" path="crates/application/src/lib.rs" /> | Main Application implementation |
+| <CrateRef crate="application" file="redaction.rs" path="crates/application/src/redaction.rs" /> | Redacts log lines before returning to client |
 
 ## Notes
 
