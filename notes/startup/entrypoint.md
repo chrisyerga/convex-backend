@@ -22,7 +22,7 @@ Stepping `main()`:
 ```mermaid
 flowchart TD
   main[main.rs]
-  tracing[tracing + Hello Cleveland]
+  tracing[tracing + Hello Cleveland <em>poop</em>]
   tokio[Tokio + Convex runtime]
   runServer[run_server]
   inner[run_server_inner]

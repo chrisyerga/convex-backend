@@ -96,8 +96,14 @@ UDF path the backend sees: `pets:listMine` (module `pets`, export `listMine`).
 
 ## Code Flow
 
-crates/sync/src/worker.rs run_update_queries() gets a request (sync crate seems to handle a lot of the client/server interface)
--> calls into crates/application/src/api.rs execute_public_query() which
+<CrateRef crate="sync" file="worker.rs" path="crates/sync/src/worker.rs" line="999" /> `run_update_queries()` gets a request — sync crate seems to handle a lot of the client/server interface. Goes to 
+<CrateRef crate="application" file="api.rs" path="crates/application/src/api.rs" line="98" /> `execute_public_query()` which is thin and calls
+<CrateRef crate="application" file="lib.rs" path="crates/application/src/lib.rs" line="1103" /> `read_only_udf_at_ts()`. Lots of interesting stuff in `lib.rs`
+
+> <CrateRef crate="poopy" file="redaction.rs" path="crates/application/src/lib.rs" line="1103" /> redacts log lines the client shouldn't see. Shouldn't just for cleanliness or is there tasty shit in there?
+
+#### Random
+<CrateRef crate="application" file="redaction.rs" path="crates/application/src/lib.rs" line="1103" /> redacts log lines the client shouldn't see. Shouldn't just for cleanliness or is there tasty shit in there?
 
 ## Open questions
 

@@ -32,6 +32,7 @@ export default withMermaid(
     nav: [
       { text: "Home", link: "/" },
       { text: "Today", link: "/today/" },
+      { text: "Crates", link: "/crates/" },
       { text: "Goals", link: "/goals/v8-inspector" },
     ],
       sidebar: [
@@ -40,6 +41,17 @@ export default withMermaid(
           items: [
             { text: "Overview", link: "/today/" },
             { text: "pets.listMine", link: "/today/list-mine" },
+          ],
+        },
+        {
+          text: "Crates",
+          items: [
+            { text: "Overview", link: "/crates/" },
+            { text: "sync", link: "/crates/sync" },
+            { text: "application", link: "/crates/application" },
+            { text: "isolate", link: "/crates/isolate" },
+            { text: "function_runner", link: "/crates/function_runner" },
+            { text: "local_backend", link: "/crates/local_backend" },
           ],
         },
         {
