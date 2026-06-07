@@ -39,6 +39,10 @@ convex *ARGS:
 reset-local-backend:
   rm -rf convex_local_storage && rm -f convex_local_backend.sqlite3
 
+# Personal exploration notes (VitePress). Open http://localhost:5173
+notes:
+  cd {{justfile_directory()}}/notes && npm install && npm run dev
+
 # Global JavaScript tools
 # Common commands are
 # - `just rush build` to build all projects in npm-packages
