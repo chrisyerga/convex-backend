@@ -10,6 +10,8 @@ Previously: stepped through startup through `make_app()` and `InProcessFunctionR
 
 See [V8 inspector goal](/goals/v8-inspector) for the north star.
 
+**Crate guides:** [Top 12 for query flow](/crates/) — local_backend → sync → … → runtime.
+
 ## Quick reference
 
 | What | Value | Notes |

@@ -3,35 +3,77 @@ export type CrateEntry = {
   color: string;
   /** Optional one-line description on the crates index */
   blurb?: string;
+  /** Top-12 query-flow crate (shown prominently on index) */
+  core?: boolean;
 };
 
 /**
  * Registry of crates we've written notes for.
- * Add entries here as we encounter crates — colors are arbitrary for now.
+ * `core: true` = top dozen for tracing app/query flow.
  */
 export const crateRegistry: Record<string, CrateEntry> = {
+  local_backend: {
+    color: "#10b981",
+    blurb: "Dev server binary — startup, HTTP routes, wires everything together",
+    core: true,
+  },
   sync: {
     color: "#0ea5e9",
-    blurb: "Client/server sync protocol — WebSocket subscriptions, query refresh",
+    blurb: "WebSocket sync protocol — subscriptions and query refresh",
+    core: true,
+  },
+  authentication: {
+    color: "#ec4899",
+    blurb: "JWT/OIDC validation — Bearer token → Identity",
+    core: true,
   },
   application: {
     color: "#8b5cf6",
-    blurb: "Core Application type — execute_public_query and UDF dispatch",
-  },
-  isolate: {
-    color: "#f59e0b",
-    blurb: "V8 sandbox — IsolateClient, execute_udf, workers",
-  },
-  local_backend: {
-    color: "#10b981",
-    blurb: "Local dev server binary — main, config, public API routes",
+    blurb: "Application type — execute_public_query, caching, redaction",
+    core: true,
   },
   function_runner: {
     color: "#ef4444",
-    blurb: "InProcessFunctionRunner — bridges Application to IsolateClient",
+    blurb: "InProcessFunctionRunner — opens DB txn, calls IsolateClient",
+    core: true,
+  },
+  isolate: {
+    color: "#f59e0b",
+    blurb: "V8 sandbox — execute_udf, syscalls, module loading",
+    core: true,
+  },
+  database: {
+    color: "#14b8a6",
+    blurb: "Transactional storage — DeveloperQuery, ReadSet, reactive tokens",
+    core: true,
+  },
+  model: {
+    color: "#a855f7",
+    blurb: "System tables — _auth, _modules, _schemas metadata",
+    core: true,
+  },
+  udf: {
+    color: "#f97316",
+    blurb: "UDF outcomes and pre-run validation",
+    core: true,
+  },
+  value: {
+    color: "#84cc16",
+    blurb: "Convex values — documents, IDs, JsonPackedValue for wire format",
+    core: true,
+  },
+  common: {
+    color: "#6366f1",
+    blurb: "Shared types — ExportPath, Query AST, Identity, Runtime trait",
+    core: true,
+  },
+  runtime: {
+    color: "#64748b",
+    blurb: "ProdRuntime — Tokio, clocks, RNG for Database and UDF runs",
+    core: true,
   },
   keybroker: {
-    color: "#64748b",
+    color: "#78716c",
     blurb: "Dev instance keys and secrets for local backend",
   },
   search: {
@@ -39,8 +81,8 @@ export const crateRegistry: Record<string, CrateEntry> = {
     blurb: "Search indexing — in_process_searcher setup at startup",
   },
   backend_harness: {
-    color: "#a855f7",
-    blurb: "Test harness — port sniffing for hosted deployments",
+    color: "#94a3b8",
+    blurb: "Test harness — hosted deployment port sniffing",
   },
 };
 
@@ -70,3 +112,8 @@ export function getCrateStyle(crate: string): { color: string; registered: boole
 export function crateNotesPath(crate: string): string {
   return `/crates/${crate}`;
 }
+
+/** Core dozen in query-flow order */
+export const coreCrates = Object.entries(crateRegistry)
+  .filter(([, e]) => e.core)
+  .map(([name]) => name);
