@@ -25,7 +25,6 @@ use common::{
     },
     components::{
         CanonicalizedComponentFunctionPath,
-        CanonicalizedComponentModulePath,
         ComponentDefinitionPath,
         ComponentId,
         ComponentName,
@@ -1367,31 +1366,18 @@ impl<RT: Runtime> ApplicationFunctionRunner<RT> {
                 })
             },
             ModuleEnvironment::Node => {
-                // We should not be missing the module given we validated the path above
-                // which requires the module to exist.
-                let module_path = CanonicalizedComponentModulePath {
-                    component: path.component,
-                    module_path: path.udf_path.module().clone(),
-                };
-                let component = path.component;
-                let module_metadata = match ModuleModel::new(&mut tx)
-                    .get_metadata(module_path.clone())
+                let source_package = SourcePackageModel::new(&mut tx, path.component.into())
+                    .get_latest()
                     .await?
-                {
-                    Some(r) => r,
-                    None => anyhow::bail!("Missing a valid module_version"),
-                };
-                let source_package = SourcePackageModel::new(&mut tx, component.into())
-                    .get(module_metadata.source_package_id)
-                    .await?;
+                    .context("no source package?")?;
                 let source_maps_callback = async {
                     let module_version = self
                         .module_cache
-                        .get_module_with_metadata(&module_metadata, &source_package)
+                        .get_module_with_metadata(&module, &source_package)
                         .await?;
                     let mut source_maps = BTreeMap::new();
                     if let Some(source_map) = module_version.source_map.clone() {
-                        source_maps.insert(module_path.module_path.clone(), source_map);
+                        source_maps.insert(path.udf_path.module().clone(), source_map);
                     }
                     Ok(source_maps)
                 };
@@ -1400,11 +1386,6 @@ impl<RT: Runtime> ApplicationFunctionRunner<RT> {
                     .acquire_permit_with_timeout(&self.runtime)
                     .await?;
 
-                let source_package_id = module.source_package_id;
-                let source_package = SourcePackageModel::new(&mut tx, component.into())
-                    .get(source_package_id)
-                    .await?
-                    .into_value();
                 let mut environment_variables =
                     system_env_vars(&mut tx, self.default_system_env_vars.clone()).await?;
                 let user_environment_variables =
@@ -1416,10 +1397,10 @@ impl<RT: Runtime> ApplicationFunctionRunner<RT> {
                     .modules_storage
                     .signed_url(source_package.storage_key.clone(), Duration::from_secs(60));
                 let (source_uri, external_deps_package) = if let Some(external_deps_package_id) =
-                    source_package.external_deps_package_id
+                    &source_package.external_deps_package_id
                 {
                     let pkg = ExternalPackagesModel::new(&mut tx)
-                        .get(external_deps_package_id)
+                        .get(external_deps_package_id.clone())
                         .await?
                         .into_value();
                     let external_uri_future = self
@@ -1446,12 +1427,12 @@ impl<RT: Runtime> ApplicationFunctionRunner<RT> {
                     source_package: node_executor::SourcePackage {
                         bundled_source: node_executor::Package {
                             uri: source_uri,
-                            key: source_package.storage_key,
-                            sha256: source_package.sha256,
+                            key: source_package.storage_key.clone(),
+                            sha256: source_package.sha256.clone(),
                         },
                         external_deps: external_deps_package,
                     },
-                    source_package_id,
+                    source_package_id: source_package.developer_id().into(),
                     user_identity: tx.user_identity(),
                     auth_header: token_to_authorization_header(tx.authentication_token())?,
                     environment_variables,
