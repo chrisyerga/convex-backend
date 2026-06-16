@@ -1890,14 +1890,17 @@ export interface components {
         AuditLogActor: "system" | {
             member: {
                 member_id: components["schemas"]["MemberId"];
+                token_id?: null | components["schemas"]["AccessTokenId"];
             };
         } | {
             serviceAccount: {
                 member_id: components["schemas"]["MemberId"];
+                token_id: components["schemas"]["AccessTokenId"];
             };
         } | {
             team: {
                 team_id: components["schemas"]["TeamId"];
+                token_id: components["schemas"]["AccessTokenId"];
             };
         } | {
             app: {
@@ -1907,6 +1910,8 @@ export interface components {
         AuditLogEventResponse: {
             action: components["schemas"]["AuditLogAction"];
             actor: components["schemas"]["AuditLogActor"];
+            clientIp?: string | null;
+            clientUserAgent?: string | null;
             /** Format: int64 */
             createTime: number;
             metadata: components["schemas"]["Value"];

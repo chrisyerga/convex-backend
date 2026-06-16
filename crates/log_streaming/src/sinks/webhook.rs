@@ -1,4 +1,5 @@
 use std::{
+    collections::BTreeSet,
     ops::Deref,
     sync::{
         atomic::Ordering,
@@ -23,6 +24,7 @@ use common::{
     log_streaming::{
         LogEvent,
         LogEventFormatVersion,
+        LogTopic,
     },
     runtime::Runtime,
 };
@@ -51,8 +53,8 @@ use crate::{
     sinks::utils::{
         self,
         build_event_batches,
-        default_log_filter,
         EgressCounter,
+        SinkFilter,
     },
     LogSinkClient,
     LoggingDeploymentMetadata,
@@ -82,6 +84,7 @@ impl<'a> WebhookLogEvent<'a> {
 pub struct WebhookSink<RT: Runtime> {
     runtime: RT,
     config: WebhookConfig,
+    filter: SinkFilter,
     fetch_client: Arc<dyn FetchClient>,
     events_receiver: mpsc::Receiver<Vec<Arc<LogEvent>>>,
     backoff: Backoff,
@@ -93,6 +96,7 @@ impl<RT: Runtime> WebhookSink<RT> {
     pub async fn start(
         runtime: RT,
         config: WebhookConfig,
+        subscribed_topics: Option<BTreeSet<LogTopic>>,
         fetch_client: Arc<dyn FetchClient>,
         deployment_metadata: Arc<Mutex<LoggingDeploymentMetadata>>,
         egress_counter: EgressCounter,
@@ -104,6 +108,7 @@ impl<RT: Runtime> WebhookSink<RT> {
         let mut sink = Self {
             runtime: runtime.clone(),
             config,
+            filter: SinkFilter::for_version(LOG_EVENT_FORMAT_FOR_WEBHOOK, subscribed_topics),
             fetch_client,
             events_receiver: rx,
             backoff: Backoff::new(
@@ -149,7 +154,7 @@ impl<RT: Runtime> WebhookSink<RT> {
                     let batches = build_event_batches(
                         ev,
                         consts::WEBHOOK_SINK_MAX_LOGS_PER_BATCH,
-                        default_log_filter,
+                        &self.filter,
                     );
 
                     // Process each batch and send to Datadog
@@ -250,17 +255,16 @@ impl<RT: Runtime> WebhookSink<RT> {
                     } else {
                         let delay = self.backoff.fail(&mut self.runtime.rng());
                         tracing::warn!(
-                            "Failed to send in Webhook sink: {e}. Waiting {delay:?} before \
-                             retrying."
+                            "Failed to send in Webhook sink, waiting {delay:?} before retrying: \
+                             {e:#}"
                         );
-                        // Wrap error with ErrorMetadata if it doesn't have it, so the actual
-                        // error message appears in the failure reason
+                        // Tag transport failures with ErrorMetadata so the error message
+                        // surfaces in the customer-facing failure reason. Attach it with
+                        // `.context` rather than replacing the error, so the original cause
+                        // chain is preserved and still appears in `{e:#}` logs.
                         let e = if e.downcast_ref::<ErrorMetadata>().is_none() {
                             let error_msg = format!("{e}");
-                            anyhow::anyhow!(ErrorMetadata::overloaded(
-                                "WebhookRequestFailed",
-                                error_msg
-                            ))
+                            e.context(ErrorMetadata::overloaded("WebhookRequestFailed", error_msg))
                         } else {
                             e
                         };
@@ -309,7 +313,7 @@ impl<RT: Runtime> WebhookSink<RT> {
         if let Err(e) = self.send_batch(values_to_send, false, track_egress).await {
             // We don't report this error to Sentry to prevent misconfigured webhook sinks
             // from overflowing our Sentry logs.
-            tracing::error!("could not send batch to WebhookSink: {e}");
+            tracing::error!("could not send batch to WebhookSink: {e:#}");
         } else {
             crate::metrics::webhook_sink_logs_sent(batch_size);
         }

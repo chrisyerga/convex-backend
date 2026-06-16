@@ -11,10 +11,7 @@ use futures::FutureExt;
 use keybroker::Identity;
 use model::{
     backend_info::BackendInfoModel,
-    deployment_audit_log::{
-        types::DeploymentAuditLogEvent,
-        DeploymentAuditLogModel,
-    },
+    deployment_audit_log::types::DeploymentAuditLogEvent,
     log_sinks::{
         types::{
             LogSinksRow,
@@ -56,37 +53,37 @@ pub async fn add_local_log_sink_on_startup<RT: Runtime>(
 }
 
 impl<RT: Runtime> Application<RT> {
-    pub async fn add_log_sink(&self, config: SinkConfig) -> anyhow::Result<ResolvedDocumentId> {
+    pub async fn add_log_sink(
+        &self,
+        identity: Identity,
+        config: SinkConfig,
+    ) -> anyhow::Result<ResolvedDocumentId> {
         let sink_type = config.sink_type().as_str().to_string();
-        let (_ts, id) = self
-            .execute_with_occ_retries(
-                Identity::system(),
-                FunctionUsageTracker::new(),
-                "add_log_sink",
-                |tx| {
-                    let config = config.clone();
-                    let sink_type = sink_type.clone();
-                    async move {
-                        let id = LogSinksModel::new(tx).add_or_update(config).await?;
-                        let id_str = DeveloperDocumentId::from(id).encode();
-                        DeploymentAuditLogModel::new(tx)
-                            .insert(vec![DeploymentAuditLogEvent::CreateIntegration {
-                                id: id_str,
-                                r#type: sink_type,
-                            }])
-                            .await?;
-                        Ok(id)
-                    }
-                    .boxed()
-                    .into()
-                },
-            )
+        let id = self
+            .execute_with_audit_log_events_and_occ_retries(identity, "add_log_sink", |tx| {
+                let config = config.clone();
+                let sink_type = sink_type.clone();
+                async move {
+                    let id = LogSinksModel::new(tx).add_or_update(config).await?;
+                    let id_str = DeveloperDocumentId::from(id).encode();
+                    Ok((
+                        id,
+                        vec![DeploymentAuditLogEvent::CreateIntegration {
+                            id: id_str,
+                            r#type: sink_type,
+                        }],
+                    ))
+                }
+                .boxed()
+                .into()
+            })
             .await?;
         Ok(id)
     }
 
     pub async fn patch_log_sink_config(
         &self,
+        identity: Identity,
         id: &String,
         config: SinkConfig,
     ) -> anyhow::Result<()> {
@@ -97,9 +94,8 @@ impl<RT: Runtime> Application<RT> {
                 "The log stream id is invalid"
             ))
         })?;
-        self.execute_with_occ_retries(
-            Identity::system(),
-            FunctionUsageTracker::new(),
+        self.execute_with_audit_log_events_and_occ_retries(
+            identity,
             "patch_log_sink_config",
             |tx| {
                 let config = config.clone();
@@ -107,14 +103,15 @@ impl<RT: Runtime> Application<RT> {
                 let id_str = id.clone();
                 async move {
                     let id = tx.resolve_developer_id(&developer_id, TableNamespace::Global)?;
-                    LogSinksModel::new(tx).patch_config(id, config).await?;
-                    DeploymentAuditLogModel::new(tx)
-                        .insert(vec![DeploymentAuditLogEvent::UpdateIntegration {
+                    let mut model = LogSinksModel::new(tx);
+                    model.patch_config(id, config).await?;
+                    Ok((
+                        (),
+                        vec![DeploymentAuditLogEvent::UpdateIntegration {
                             id: id_str,
                             r#type: sink_type,
-                        }])
-                        .await?;
-                    Ok(())
+                        }],
+                    ))
                 }
                 .boxed()
                 .into()
@@ -210,53 +207,51 @@ impl<RT: Runtime> Application<RT> {
         Ok(sinks)
     }
 
-    pub async fn remove_log_sink_by_id(&self, id: String) -> anyhow::Result<()> {
+    pub async fn remove_log_sink_by_id(
+        &self,
+        identity: Identity,
+        id: String,
+    ) -> anyhow::Result<()> {
         let developer_id = DeveloperDocumentId::decode(&id).map_err(|_| {
             anyhow::anyhow!(ErrorMetadata::bad_request(
                 "InvalidLogStreamId",
                 "The log stream id is invalid"
             ))
         })?;
-        self.execute_with_occ_retries(
-            Identity::system(),
-            FunctionUsageTracker::new(),
-            "remove_log_sink",
-            |tx| {
-                let id = id.clone();
-                async move {
-                    let resolved_id =
-                        tx.resolve_developer_id(&developer_id, TableNamespace::Global)?;
-                    let row: ParsedDocument<LogSinksRow> = tx
-                        .get(resolved_id)
-                        .await?
-                        .ok_or_else(|| {
-                            ErrorMetadata::bad_request(
-                                "LogStreamDoesntExist",
-                                "No log stream with the given id exists for this deployment.",
-                            )
-                        })?
-                        .parse()?;
-                    if row.status == SinkState::Tombstoned {
-                        return Err(ErrorMetadata::bad_request(
+        self.execute_with_audit_log_events_and_occ_retries(identity, "remove_log_sink", |tx| {
+            let id = id.clone();
+            async move {
+                let resolved_id = tx.resolve_developer_id(&developer_id, TableNamespace::Global)?;
+                let row: ParsedDocument<LogSinksRow> = tx
+                    .get(resolved_id)
+                    .await?
+                    .ok_or_else(|| {
+                        ErrorMetadata::bad_request(
                             "LogStreamDoesntExist",
                             "No log stream with the given id exists for this deployment.",
                         )
-                        .into());
-                    }
-                    let sink_type = row.into_value().config.sink_type().as_str().to_string();
-                    LogSinksModel::new(tx).mark_for_removal(resolved_id).await?;
-                    DeploymentAuditLogModel::new(tx)
-                        .insert(vec![DeploymentAuditLogEvent::DeleteIntegration {
-                            id,
-                            r#type: sink_type,
-                        }])
-                        .await?;
-                    Ok(())
+                    })?
+                    .parse()?;
+                if row.status == SinkState::Tombstoned {
+                    return Err(ErrorMetadata::bad_request(
+                        "LogStreamDoesntExist",
+                        "No log stream with the given id exists for this deployment.",
+                    )
+                    .into());
                 }
-                .boxed()
-                .into()
-            },
-        )
+                let sink_type = row.into_value().config.sink_type().as_str().to_string();
+                LogSinksModel::new(tx).mark_for_removal(resolved_id).await?;
+                Ok((
+                    (),
+                    vec![DeploymentAuditLogEvent::DeleteIntegration {
+                        id,
+                        r#type: sink_type,
+                    }],
+                ))
+            }
+            .boxed()
+            .into()
+        })
         .await?;
         Ok(())
     }
@@ -265,6 +260,18 @@ impl<RT: Runtime> Application<RT> {
         let mut tx = self.begin(identity).await?;
         BackendInfoModel::new(&mut tx)
             .ensure_log_streaming_allowed()
+            .await
+    }
+
+    /// Ensures the deployment is entitled to subscribe a log stream to the
+    /// `custom_audit` topic.
+    pub async fn ensure_custom_audit_logs_in_log_streams_allowed(
+        &self,
+        identity: Identity,
+    ) -> anyhow::Result<()> {
+        let mut tx = self.begin(identity).await?;
+        BackendInfoModel::new(&mut tx)
+            .ensure_custom_audit_logs_in_log_streams_allowed()
             .await
     }
 }
